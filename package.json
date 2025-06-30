@@ -1,0 +1,26 @@
+{
+  "name": "marketplace-project",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev":"nodemon api/index.js",
+    "start" :"node api/index.js"
+  },
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/batman-rises/mern-estate.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/batman-rises/mern-estate/issues"
+  },
+  "homepage": "https://github.com/batman-rises/mern-estate#readme",
+  "description": "",
+  "dependencies": {
+    "express": "^5.1.0",
+    "nodemon": "^3.1.10"
+  }
+}
