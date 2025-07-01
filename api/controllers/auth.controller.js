@@ -1,5 +1,7 @@
 import bcryptjs from "bcryptjs";
 import User from "../models/user.model.js";
+
+//USE OF MIDDLEWARE
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
   const hashedPassword = await bcryptjs.hash(password, 10);

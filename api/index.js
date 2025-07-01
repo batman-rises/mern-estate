@@ -26,7 +26,7 @@ app.listen(3000, () => {
   console.log("app is listening on port 3000");
 });
 
-//error handling middleware
+//ERROR handling middleware
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
