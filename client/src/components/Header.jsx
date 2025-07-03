@@ -28,6 +28,8 @@ const Header = () => {
               About
             </li>
           </Link>
+          {/* On extra small screens (<640px), these li are hidden.
+              On small screens (≥640px), it's displayed inline */}
           <Link to="/sign-in">
             <li className="text-state-700 hover:underline">Sign in</li>
           </Link>

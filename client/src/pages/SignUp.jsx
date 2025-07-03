@@ -25,11 +25,11 @@ const SignUp = () => {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (data.success === false) {
-        seterror(data.message);
-        setloading(false);
-        return;
-      }
+      // if (data.success === false) {
+      //   seterror(data.message);
+      //   setloading(false);
+      //   return;
+      // }
       setloading(false);
       seterror(null);
       navigate("/sign-in");
