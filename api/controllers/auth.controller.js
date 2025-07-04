@@ -35,3 +35,47 @@ export const signin = async (req, res, next) => {
     next(err);
   }
 };
+
+export const google = async (req, res, next) => {
+  try {
+    const user = await User.findOne({ email: req.body.email });
+    if (user) {
+      //user already exists then just register it via tokens
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      //we dont to respond back the password even if its hashed ~ its a good practice
+      //password ko userInfo se alag kar de rhe or baaki sab ko restUserInfo pe store kar de rhe hai
+      const { password: pass, ...restUserInfo } = user._doc;
+      res
+        .cookie("access_token", token, { httpOnly: true }) //expires:new Date(Date.now())})
+        .status(200)
+        .json(restUserInfo);
+    } else {
+      const name = req.body.name;
+      //Binayak Panda => binayakpanda4343 aisa kuch hona chahiye na?
+      const perfectName =
+        name.split(" ").join("").toLowerCase() +
+        Math.random().toString(36).slice(-4);
+      //sign up via google me password thori chahhiye hoga so autogenerate karle
+      const generatedPassword =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+      const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
+      const newUser = new User({
+        username: perfectName,
+        email: req.body.email,
+        password: hashedPassword,
+        avatar: req.body.photo,
+      });
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
+      const { password: pass, ...restUserInfo } = newUser._doc;
+      res //basically iska matlab hai ki aap res ke saath cookie bhej rhe jiska naam "access-token" hai & value token me stores hai;
+        //httpOnly : true isko aur secure bana de rha hai. res ke saath ke status code bhej rhe alonwith the JSON DATA
+        .cookie("access-token", token, { httpOnly: true })
+        .status(200)
+        .json(restUserInfo);
+    }
+  } catch (err) {
+    next(err);
+  }
+};
