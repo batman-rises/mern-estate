@@ -2,6 +2,8 @@ import { useRef, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteUserFailure,
+  deleteUserSuccess,
   updateUserFailure,
   updateUserStart,
   updateUserSuccess,
@@ -69,7 +71,14 @@ export default function Profile() {
       await fetch(`/api/user/delete/${currentUser._id}`, {
         method: "DELETE",
       });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data.message));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
     } catch (err) {
+      dispatch(deleteUserFailure(data.message));
       console.log(err.message);
     }
   };
