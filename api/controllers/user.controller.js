@@ -6,6 +6,9 @@ export const test = (req, res) => {
   res.send("hello");
 };
 export const updateUser = async (req, res, next) => {
+  console.log("UPDATE ROUTE HIT");
+  console.log("req.user:", req.user);
+  console.log("req.params.id:", req.params.id);
   if (req.user.id !== req.params.id)
     return next(errorHandler(401, "You can only update your own account"));
   try {
@@ -34,6 +37,8 @@ export const updateUser = async (req, res, next) => {
 };
 
 export const deleteUser = async (req, res, next) => {
+  console.log("DELETE ROUTE HIT ✅"); // <-- ✅ Add this line here
+
   if (req.user.id !== req.params.id)
     return next(errorHandler(401, "You can only delete your own account"));
   try {

@@ -48,17 +48,19 @@ export default function Profile() {
     e.preventDefault();
     try {
       const res = await fetch(`/api/user/update/${currentUser._id}`, {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include",
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      if (data.success === false) {
-        dispatch(updateUserFailure(err.message));
-        return;
-      }
+      // if (data.success === false) {
+      //   dispatch(updateUserFailure(err.message));
+      //   return;
+      // }
+      dispatch(updateUserSuccess(data)); // ✅ Add this
       setUpdateSuccess(true);
     } catch (err) {
       dispatch(updateUserFailure(err.message));
@@ -68,8 +70,9 @@ export default function Profile() {
 
   const handleDeleteUser = async () => {
     try {
-      await fetch(`/api/user/delete/${currentUser._id}`, {
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
         method: "DELETE",
+        credentials: "include",
       });
       const data = await res.json();
       if (data.success === false) {
@@ -78,7 +81,7 @@ export default function Profile() {
       }
       dispatch(deleteUserSuccess(data));
     } catch (err) {
-      dispatch(deleteUserFailure(data.message));
+      dispatch(deleteUserFailure(err.message));
       console.log(err.message);
     }
   };

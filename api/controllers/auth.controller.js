@@ -17,6 +17,9 @@ export const signup = async (req, res, next) => {
 };
 
 export const signin = async (req, res, next) => {
+  console.log("SIGNIN ROUTE HIT");
+  console.log("Email received:", email);
+  console.log("Password received:", password);
   const { email, password } = req.body;
   try {
     const validUser = await User.findOne({ email });
@@ -71,11 +74,20 @@ export const google = async (req, res, next) => {
       const { password: pass, ...restUserInfo } = newUser._doc;
       res //basically iska matlab hai ki aap res ke saath cookie bhej rhe jiska naam "access-token" hai & value token me stores hai;
         //httpOnly : true isko aur secure bana de rha hai. res ke saath ke status code bhej rhe alonwith the JSON DATA
-        .cookie("access-token", token, { httpOnly: true })
+        .cookie("access_token", token, { httpOnly: true })
         .status(200)
         .json(restUserInfo);
     }
   } catch (err) {
     next(err);
+  }
+};
+
+export const signOut = async (req, res, next) => {
+  try {
+    res.clearCookie("access_token");
+    res.status(200).json("User has been logged out");
+  } catch (e) {
+    next(e);
   }
 };
