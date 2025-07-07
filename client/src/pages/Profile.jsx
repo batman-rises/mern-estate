@@ -1,12 +1,18 @@
 import { useRef, useState } from "react";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+} from "../redux/user/userSlice";
 
 export default function Profile() {
   const fileRef = useRef(null);
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, loading, error } = useSelector((state) => state.user);
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({});
+  const dispatch = useDispatch();
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
@@ -32,6 +38,7 @@ export default function Profile() {
   };
 
   const handleChange = (e) => {
+    //event listener
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
@@ -47,11 +54,13 @@ export default function Profile() {
       });
       const data = await res.json();
       if (data.success === false) {
+        dispatch(updateUserFailure(err.message));
         return;
       }
       setUpdateSuccess(true);
     } catch (err) {
-      console.log(err.message);
+      dispatch(updateUserFailure(err.message));
+      //console.log(err.message);
     }
   };
 
@@ -111,7 +120,7 @@ export default function Profile() {
         <input
           type="text"
           placeholder="Username"
-          defaultValue={currentUser.username}
+          defaultValue={currentUser.username} //imp
           id="username"
           className="border p-3 rounded-lg"
           onChange={handleChange}
@@ -135,8 +144,9 @@ export default function Profile() {
         <button
           type="submit"
           className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95"
+          disabled={loading}
         >
-          Update
+          {loading ? "Loading..." : "Update"}
         </button>
       </form>
 
