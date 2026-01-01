@@ -10,7 +10,7 @@ const SignUp = () => {
 
   const handleChange = (e) => {
     setformData({
-      ...formData, //puch kya purpose
+      ...formData, //setformData ko unpack karta hai
       [e.target.id]: e.target.value,
     });
   };
@@ -19,6 +19,7 @@ const SignUp = () => {
     try {
       setloading(true);
       const res = await fetch("/api/auth/signup", {
+        //learn
         method: "POST",
         headers: {
           "Content-Type": "application/json",
