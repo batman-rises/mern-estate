@@ -14,33 +14,62 @@ const SignUp = () => {
       [e.target.id]: e.target.value,
     });
   };
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     setloading(true);
+  //     const res = await fetch("/api/auth/signup", {
+  //       //learn
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(formData),
+  //     });
+  //     const data = await res.json();
+  //     // if (data.success === false) {
+  //     //   seterror(data.message);
+  //     //   setloading(false);
+  //     //   return;
+  //     // }
+  //     setloading(false);
+  //     seterror(null);
+  //     navigate("/sign-in"); //if everything is fine navigate to sign in page
+  //   } catch (error) {
+  //     setloading(false);
+  //     seterror(error.message);
+  //   }
+  // };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       setloading(true);
+      seterror(null); // Clear previous errors
+
       const res = await fetch("/api/auth/signup", {
-        //learn
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(formData),
       });
+
       const data = await res.json();
-      // if (data.success === false) {
-      //   seterror(data.message);
-      //   setloading(false);
-      //   return;
-      // }
+
+      if (!res.ok || data.success === false) {
+        seterror(data.message || "Something went wrong");
+        setloading(false);
+        return;
+      }
+
       setloading(false);
-      seterror(null);
       navigate("/sign-in");
     } catch (error) {
       setloading(false);
       seterror(error.message);
     }
   };
-
   return (
     <div className="p-3 max-w-lg mx-auto">
       <h1 className="text-3xl text-center font-semibold my-7">Sign Up</h1>

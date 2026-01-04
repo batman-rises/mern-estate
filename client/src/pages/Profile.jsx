@@ -11,7 +11,7 @@ import {
 import { Link } from "react-router-dom";
 
 export default function Profile() {
-  const fileRef = useRef(null);
+  const fileRef = useRef(null); //it is used to access img file input directly by clicking on img in the screen
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [file, setFile] = useState(null);
   const [formData, setFormData] = useState({});
@@ -19,6 +19,7 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [uploadError, setUploadError] = useState(false);
   const [updateSuccess, setUpdateSuccess] = useState(false);
+  const [filePerc, setFilePerc] = useState(0); // Upload percentage store karne ke liye
 
   const handleImageUpload = async () => {
     if (!file) return;
@@ -26,10 +27,17 @@ export default function Profile() {
     formData.append("image", file);
     setUploading(true);
     try {
-      const res = await axios.post("/api/upload/avatar", formData);
+      const res = await axios.post("/api/upload/avatar", formData, {
+        onUploadProgress: (progressEvent) => {
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
+          setFilePerc(percentCompleted);
+        },
+      }); //backend controlller pe ye req ja rhi hai, and wo iss formdata me se image ko read karke cloudinary pe upload kar dega
       setFormData((prev) => ({
         ...prev,
-        avatar: res.data.url,
+        avatar: res.data.url, //Cloudinary upload hone ke baad ek Secure URL return karta hai, jise aap formData state mein save kar lete hain taaki wo database mein ja sake.
       }));
       setUploadError(false);
     } catch (err) {
@@ -103,13 +111,13 @@ export default function Profile() {
         <input
           type="file"
           ref={fileRef}
-          hidden
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files[0])}
+          hidden //it is hidden as we are triggering it via img click
+          accept="image/*" //only accepts images
+          onChange={(e) => setFile(e.target.files[0])} //puting the selected file into file state
         />
 
         <img
-          onClick={() => fileRef.current.click()}
+          onClick={() => fileRef.current.click()} //fileRef logic
           src={formData.avatar || currentUser.avatar}
           alt="profile"
           className="rounded-full h-24 w-24 object-cover cursor-pointer self-center mt-2"
@@ -123,7 +131,16 @@ export default function Profile() {
         >
           {uploading ? "Uploading..." : "Upload Avatar"}
         </button>
-
+        {/* Progress Bar UI */}
+        {uploading && (
+          <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2 mb-2">
+            <div
+              className="bg-indigo-600 h-2.5 rounded-full transition-all duration-300"
+              style={{ width: `${filePerc}%` }}
+            ></div>
+            <p className="text-xs text-center mt-1">{`Uploading: ${filePerc}%`}</p>
+          </div>
+        )}
         {uploadError && (
           <p className="text-red-700 text-sm text-center">
             Upload failed. Try again.
@@ -187,3 +204,13 @@ export default function Profile() {
     </div>
   );
 }
+/**Summary Flow:
+User image choose karta hai (setFile).
+
+"Upload Avatar" button click hota hai (handleImageUpload).
+
+Backend image Cloudinary ko bhejta hai.
+
+Cloudinary URL wapas deta hai jo aapki state (avatar) mein update ho jata hai.
+
+Finally, jab user "Update" button dabata hai, toh wo Cloudinary URL MongoDB mein save ho jata hai. */

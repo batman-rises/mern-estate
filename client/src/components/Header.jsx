@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const Header = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user); //from redux ~ name is user in userSlice.js
   //console.log("Header.jsx currentUser:", currentUser);
 
   return (

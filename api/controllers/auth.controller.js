@@ -12,7 +12,7 @@ export const signup = async (req, res, next) => {
     await newUser.save();
     res.status(201).json("new user crated successfully");
   } catch (e) {
-    next(e);
+    next(e); //CALLING ERROR HANDLER MIDDLEWARE
   }
 };
 

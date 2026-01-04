@@ -19,6 +19,7 @@ const App = () => {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/sign-in" element={<Signin />} />
         <Route element={<PrivateRoute />}>
+          {/**prvate route doesn't allow unauthenticated user to acces profiles or listings */}
           <Route path="/profile" element={<Profile />} />
           <Route path="/create-listing" element={<CreateListing />} />
         </Route>
